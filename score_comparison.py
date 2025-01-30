@@ -1,3 +1,5 @@
+# Experiment Plot (Comparison of Importance Scores)
+
 import os
 import re
 import matplotlib.pyplot as plt
@@ -96,22 +98,28 @@ for dataset_name in dataset_names:
 fig, axs = plt.subplots(1, 4, figsize=(28, 6), dpi=dpi)
 
 index = 0
+# 定义颜色和标记
+# 定义颜色和标记
+colors = ['blue', 'orange', 'red']  # 使用紫色替代红色
+markers = ['o', 's', '^']  # 圆形、方形、三角形标记
+
 # 绘制每个数据集的图
 for dataset_idx, dataset_name in enumerate(dataset_names):
     # 获取当前数据集的方法数据
     dataset_methods = methods_data[dataset_name]
 
     # 绘制0到1.0的曲线
-    ax1 = axs[dataset_idx+index]
+    ax1 = axs[dataset_idx + index]
     for idx, (method_name, (x_vals, y_vals)) in enumerate(dataset_methods.items()):
-        ax1.plot(x_vals, y_vals, marker='o', label=f'{custom_method_names[idx]} (0.0 to 1.0)')
+        color = colors[idx % len(colors)]  # 获取当前曲线的颜色
+        ax1.plot(x_vals, y_vals, marker=markers[idx % len(markers)], color=color, label=f'{custom_method_names[idx]}')
 
         # 找到最高点并突出显示
         max_index = np.argmax(y_vals)
         max_x = x_vals[max_index]
         max_y = y_vals[max_index]
-        ax1.plot(max_x, max_y, 'ro', markersize=10)  # 用红色圆点标记最高点并加大
-        ax1.plot(max_x, max_y, 'o', markersize=15, color='yellow', alpha=0.5)  # 用黄色圆点加大高亮显示
+        ax1.plot(max_x, max_y, 'o', markersize=10, color=color)  # 用当前曲线颜色标记最高点
+        ax1.plot(max_x, max_y, 'o', markersize=15, color=color, alpha=0.5)  # 用当前曲线颜色加大高亮显示
 
     # 设置x轴为更密集的刻度
     x_ticks = np.linspace(0, 1, 11)  # 创建0到1的x坐标刻度
@@ -129,21 +137,22 @@ for dataset_idx, dataset_name in enumerate(dataset_names):
     ax1.grid(True)
 
     # 绘制0.99到1.0的曲线
-    ax2 = axs[dataset_idx+index+1]
+    ax2 = axs[dataset_idx + index + 1]
     for idx, (method_name, (x_vals, y_vals)) in enumerate(dataset_methods.items()):
         # 筛选x坐标在0.99到1.0之间的部分
         filtered_x_vals = [x for x in x_vals if 0.99 <= x <= 1.0]
         filtered_y_vals = [y_vals[i] for i in range(len(x_vals)) if 0.99 <= x_vals[i] <= 1.0]
 
-        ax2.plot(filtered_x_vals, filtered_y_vals, marker='o', label=f'{custom_method_names[idx]} (0.99 to 1.0)', linestyle='--')
+        color = colors[idx % len(colors)]  # 获取当前曲线的颜色
+        ax2.plot(filtered_x_vals, filtered_y_vals, marker=markers[idx % len(markers)], color=color, label=f'{custom_method_names[idx]}', linestyle='--')
 
         # 找到最高点并突出显示
         if filtered_y_vals:  # 确保有数据
             max_index = np.argmax(filtered_y_vals)
             max_x = filtered_x_vals[max_index]
             max_y = filtered_y_vals[max_index]
-            ax2.plot(max_x, max_y, 'ro', markersize=10)  # 用红色圆点标记最高点并加大
-            ax2.plot(max_x, max_y, 'o', markersize=15, color='yellow', alpha=0.5)  # 用黄色圆点加大高亮显示
+            ax2.plot(max_x, max_y, 'o', markersize=10, color=color)  # 用当前曲线颜色标记最高点
+            ax2.plot(max_x, max_y, 'o', markersize=15, color=color, alpha=0.5)  # 用当前曲线颜色加大高亮显示
 
     # 设置x轴为更密集的刻度
     x_ticks = np.linspace(0.99, 1.0, 11)  # 创建0.99到1.0的x坐标刻度
@@ -166,7 +175,7 @@ for dataset_idx, dataset_name in enumerate(dataset_names):
 plt.tight_layout()
 
 # 保存图像
-output_path = f'./combined_{dataset_names[0]}_{dataset_names[1]}.pdf'  # 设置输出路径为PDF文件
+output_path = f'./figures/score_comparison.pdf'  # 设置输出路径为PDF文件
 plt.savefig(output_path, dpi=dpi, format='pdf')
 
 # 显示图像

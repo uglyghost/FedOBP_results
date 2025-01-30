@@ -1,8 +1,9 @@
+# Experiment Plot (Personalized Parameter Distribution)
+
 import json
 import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib
-from matplotlib.ticker import MaxNLocator
 
 # 设置dpi和字体样式
 dpi = 300
@@ -43,11 +44,19 @@ files = ['./distribution/cifar10_mask_statistics.json',
          './distribution/emnist_mask_statistics.json',
          './distribution/svhn_mask_statistics.json']
 
+# files = ['./distribution/mnist_mask_statistics.json',
+#          './distribution/fmnist_mask_statistics.json',
+#          './distribution/medmnistA_mask_statistics.json',
+#          './distribution/medmnistC_mask_statistics.json']
+
 # 子图标题
 titles = ['CIFAR10', 'CIFAR100', 'EMNIST', 'SHVN']
 
+# titles = ['MNIST', 'FMNIST', 'MedMNISTA', 'MedMNISTC']
+
 # 每个文件对应的除数（比例因子）
-divisors = [44, 93, 61, 36]  # 自定义每个文件的除数
+divisors = [44, 93, 61, 36]  # CIFAR10/100 EMNIST SHVN
+# divisors = [6, 30, 30, 30]  # MNIST FMNIST MedmnistA MedmnistC
 
 # 设置图形为1行4列的子图
 fig, axes = plt.subplots(1, 4, figsize=(28, 6), dpi=dpi)
@@ -102,9 +111,9 @@ for i, file in enumerate(files):
     ax.set_ylabel('Personalized Parameters Proportion', fontsize=plt_dict['label.size'], fontweight='bold')
 
     # 设置网格线
-    # ax.grid(which='both', linestyle='--', linewidth=0.7, color='gray')  # Major grid lines
+    ax.grid(True)  # Major grid lines
     # ax.minorticks_on()  # Enable minor ticks
-    # ax.grid(which='minor', linestyle=':', linewidth=0.5, color='lightgray')  # Minor grid lines
+    # ax.grid(True)  # Minor grid lines
 
     # 设置x轴和y轴刻度字体大小
     ax.tick_params(axis='x', labelsize=plt_dict['xtick.size'])
@@ -129,7 +138,7 @@ plt.subplots_adjust(wspace=0.3)  # 增加子图之间的间距，可以调整wsp
 
 # 调整布局后保存图表为PDF
 plt.tight_layout()
-plt.savefig('param_distribution.pdf', format='pdf', dpi=dpi)
+plt.savefig('./figures/param_distribution_1.pdf', format='pdf', dpi=dpi)
 
 # 显示图表
 plt.show()
