@@ -1,18 +1,16 @@
-# Experiment Plot (Convergence Analysis)
-
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter  # 导入平滑处理函数
-import matplotlib  # 导入matplotlib以设置参数
+from scipy.signal import savgol_filter  # Import smoothing function
+import matplotlib  # Import matplotlib to set parameters
 
 
 def find_csv_file(dataset_folder):
     """
-    在数据集文件夹下递归查找csv文件。
+    Recursively search for CSV files in the dataset folder.
 
-    :param dataset_folder: 数据集文件夹路径
-    :return: csv文件的路径，如果没有找到则返回None
+    :param dataset_folder: Path to the dataset folder
+    :return: Path to the CSV file, or None if not found
     """
     for root, dirs, files in os.walk(dataset_folder):
         for file in files:
@@ -23,12 +21,12 @@ def find_csv_file(dataset_folder):
 
 def load_data(root_folder, algorithm, dataset_folder):
     """
-    加载指定算法和数据集的CSV数据。
+    Load CSV data for the specified algorithm and dataset.
 
-    :param root_folder: 主文件夹路径
-    :param algorithm: 算法名称
-    :param dataset_folder: 数据集文件夹名称
-    :return: accuracy_test_before 列的数据，如果没有找到数据则返回 None
+    :param root_folder: Path to the main folder
+    :param algorithm: Algorithm name
+    :param dataset_folder: Dataset folder name
+    :return: Data from the accuracy_test_before column, or None if data not found
     """
     dataset_path = os.path.join(root_folder, algorithm, dataset_folder)
     csv_file = find_csv_file(dataset_path)
@@ -37,21 +35,21 @@ def load_data(root_folder, algorithm, dataset_folder):
         df = pd.read_csv(csv_file)
         return df['accuracy_test_before'].values
     else:
-        print(f"警告: 在 {dataset_folder} 中没有找到csv文件")
+        print(f"Warning: No CSV file found in {dataset_folder}")
         return None
 
 
 def plot_algorithm_per_dataset(root_folder, algorithms=None, datasets=None, y_limits=None, legend_names=None):
     """
-    绘制不同算法在不同数据集上的折线图，每个数据集一张子图。
+    Plot line charts for different algorithms on different datasets, with each dataset in a separate subplot.
 
-    :param root_folder: 主文件夹路径，包含算法和数据集文件夹
-    :param algorithms: 想要绘制的算法列表 (可选，如果为空则绘制所有算法)
-    :param datasets: 想要绘制的数据集列表 (可选，如果为空则绘制所有数据集)
-    :param y_limits: y轴范围字典 (可选，格式为 {dataset_name: (y_min, y_max)})
-    :param legend_names: 自定义图例名称字典 (可选，格式为 {algorithm_name: display_name})
+    :param root_folder: Path to the main folder containing algorithm and dataset folders
+    :param algorithms: List of algorithms to plot (optional, if empty, all algorithms will be plotted)
+    :param datasets: List of datasets to plot (optional, if empty, all datasets will be plotted)
+    :param y_limits: Dictionary of y-axis limits (optional, format: {dataset_name: (y_min, y_max)})
+    :param legend_names: Dictionary of custom legend names (optional, format: {algorithm_name: display_name})
     """
-    # 设置dpi和字体样式
+    # Set dpi and font style
     dpi = 300
     matplotlib.rcParams['font.family'] = 'serif'
     matplotlib.rcParams['font.serif'] = 'Times New Roman'
@@ -64,101 +62,100 @@ def plot_algorithm_per_dataset(root_folder, algorithms=None, datasets=None, y_li
     matplotlib.rcParams['xtick.labelsize'] = 'x-large'
     matplotlib.rcParams['ytick.labelsize'] = 'x-large'
 
-    # 设置基本字体大小
-    base_font_size = 22  # 基础字体大小，其他字体大小将基于此进行调整
-    scale_factor = 1.3  # 设置比例因子
-    plt.rcParams['axes.titlesize'] = base_font_size * scale_factor  # 标题字体大小
-    plt.rcParams['axes.labelsize'] = base_font_size  # 字标签大小
-    plt.rcParams['legend.fontsize'] = base_font_size * 0.8  # 图例字体大小（缩小）
-    plt.rcParams['xtick.labelsize'] = base_font_size * 0.8  # x轴刻度字体大小
-    plt.rcParams['ytick.labelsize'] = base_font_size * 0.8  # y轴刻度字体大小
-    plt.rcParams['legend.loc'] = 'upper right'  # 图例位置
+    # Set base font size
+    base_font_size = 22  # Base font size, other font sizes will be adjusted based on this
+    scale_factor = 1.3  # Set scale factor
+    plt.rcParams['axes.titlesize'] = base_font_size * scale_factor  # Title font size
+    plt.rcParams['axes.labelsize'] = base_font_size  # Label font size
+    plt.rcParams['legend.fontsize'] = base_font_size * 0.8  # Legend font size (reduced)
+    plt.rcParams['xtick.labelsize'] = base_font_size * 0.8  # x-axis tick font size
+    plt.rcParams['ytick.labelsize'] = base_font_size * 0.8  # y-axis tick font size
+    plt.rcParams['legend.loc'] = 'upper right'  # Legend position
 
-    # 获取所有的算法文件夹
+    # Get all algorithm folders
     algorithm_folders = [f for f in os.listdir(root_folder) if os.path.isdir(os.path.join(root_folder, f))]
 
-    # 如果指定了算法，则过滤
+    # Filter if algorithms are specified
     if algorithms:
         algorithm_folders = [alg for alg in algorithm_folders if alg in algorithms]
 
-    # 获取所有的数据集文件夹并去重
-    dataset_folders = set()  # 使用集合去重
+    # Get all dataset folders and remove duplicates
+    dataset_folders = set()  # Use a set to remove duplicates
     for alg_folder in algorithm_folders:
         dataset_folders.update([f for f in os.listdir(os.path.join(root_folder, alg_folder)) if
                                  os.path.isdir(os.path.join(root_folder, alg_folder, f))])
 
-    # 如果指定了数据集，则过滤
+    # Filter if datasets are specified
     if datasets:
-        dataset_folders = [ds for ds in datasets if ds in dataset_folders]  # 按照指定顺序过滤
+        dataset_folders = [ds for ds in datasets if ds in dataset_folders]  # Filter according to specified order
     else:
-        dataset_folders = list(dataset_folders)  # 转换回列表
+        dataset_folders = list(dataset_folders)  # Convert back to list
 
-    # 创建 1x4 的子图
-    n_cols = min(4, len(dataset_folders))  # 每行最多4个子图
-    n_rows = (len(dataset_folders) + n_cols - 1) // n_cols  # 计算行数
+    # Create 1x4 subplots
+    n_cols = min(4, len(dataset_folders))  # Maximum of 4 subplots per row
+    n_rows = (len(dataset_folders) + n_cols - 1) // n_cols  # Calculate number of rows
     fig, axes = plt.subplots(nrows=n_rows, ncols=n_cols, figsize=(25, 6 * n_rows))
-    axes = axes.flatten()  # 将axes展平为一维数组
+    axes = axes.flatten()  # Flatten axes to a 1D array
 
-    # 存储图例标签
+    # Store legend labels
     legend_labels = []
 
-    # 绘制每个数据集的折线图
-    # 绘制每个数据集的折线图
+    # Plot line charts for each dataset
     for i, dataset_folder in enumerate(dataset_folders):
         ax = axes[i]
-        ax.set_title(dataset_folder.upper())  # 数据集名称为title
+        ax.set_title(dataset_folder.upper())  # Dataset name as title
         ax.set_xlabel("Epoch")
         ax.set_ylabel("Accuracy (%)")
 
-        # 绘制每个算法在该数据集下的折线图
-        for alg_folder in algorithms:  # 按照指定的算法顺序绘制
-            if alg_folder in algorithm_folders:  # 确保算法存在
+        # Plot line charts for each algorithm in this dataset
+        for alg_folder in algorithms:  # Plot in the specified order of algorithms
+            if alg_folder in algorithm_folders:  # Ensure the algorithm exists
                 test_before = load_data(root_folder, alg_folder, dataset_folder)
 
                 if test_before is not None:
-                    # 使用Savitzky-Golay滤波器进行平滑处理
+                    # Use Savitzky-Golay filter for smoothing
                     smoothed_data = savgol_filter(test_before, window_length=20, polyorder=2)
 
-                    # 判断是否为 FedOBP，设置加粗样式
+                    # Check if it is FedOBP and set bold style
                     if alg_folder == "FedOBP":
                         line, = ax.plot(smoothed_data, label=legend_names.get(alg_folder, alg_folder), linewidth=3,
-                                        color='red')  # 加粗并设置颜色
+                                        color='red')  # Bold and set color
                     else:
-                        line, = ax.plot(smoothed_data, label=legend_names.get(alg_folder, alg_folder))  # 使用自定义名称
+                        line, = ax.plot(smoothed_data, label=legend_names.get(alg_folder, alg_folder))  # Use custom name
 
                     legend_labels.append(line)
 
-        ax.legend().set_visible(False)  # 隐藏每个子图的图例
+        ax.legend().set_visible(False)  # Hide legend for each subplot
 
-        # 设置y轴范围
+        # Set y-axis limits
         if y_limits and dataset_folder in y_limits:
             ax.set_ylim(y_limits[dataset_folder])
 
         ax.grid(True)
 
-        # 创建全局图例，调整位置
+    # Create global legend and adjust position
     fig.legend(handles=legend_labels, labels=[legend_names.get(alg, alg) for alg in algorithms],
                loc='lower center', bbox_to_anchor=(0.5, 0.03), ncol=12, fontsize=base_font_size * 0.8)
 
-    # 隐藏未使用的子图
+    # Hide unused subplots
     for j in range(i + 1, len(axes)):
         fig.delaxes(axes[j])
 
-    plt.tight_layout(rect=[0, 0.1, 1, 1])  # 调整布局以留出空间给图例
+    plt.tight_layout(rect=[0, 0.1, 1, 1])  # Adjust layout to leave space for the legend
 
-    # 保存图像
-    output_path = f'./figures/convergence_analysis_mnist_05.pdf'  # 设置输出路径为PDF文件
+    # Save the image
+    output_path = f'./figures/convergence_analysis_mnist_05.pdf'  # Set output path as a PDF file
     plt.savefig(output_path, dpi=dpi, format='pdf')
     plt.show()
 
 
-# 调用函数，传入根文件夹路径和自定义的算法或数据集列表
+# Call the function, passing the root folder path and custom algorithm or dataset lists
 root_folder = "accuracy/mnist4datasets/alpha=0.5"
 # root_folder = "accuracy/cifar4datasets/alpha=0.5"
-# algorithms = ["local", "fedavg", "fedper", "apfl", "lgfedavg", "fedrep", "fedrod", "pfedfda", "flute", "feddpa", "floco", "FedOBP"]  # 可选，自定义要绘制的算法
-algorithms = ["local", "fedavg", "fedper", "apfl", "lgfedavg", "fedrep", "pfedfda", "flute", "feddpa", "floco", "FedOBP"]  # 可选，自定义要绘制的算法
-# datasets = ["cifar10", "cifar100", "emnist", "svhn"]  # 可选，自定义要绘制的数据集
-datasets = ["mnist", "fmnist", "medmnistA", "medmnistC"]  # 可选，自定义要绘制的数据集
+# algorithms = ["local", "fedavg", "fedper", "apfl", "lgfedavg", "fedrep", "fedrod", "pfedfda", "flute", "feddpa", "floco", "FedOBP"]  # Optional, customize algorithms to plot
+algorithms = ["local", "fedavg", "fedper", "apfl", "lgfedavg", "fedrep", "pfedfda", "flute", "feddpa", "floco", "FedOBP"]  # Optional, customize algorithms to plot
+# datasets = ["cifar10", "cifar100", "emnist", "svhn"]  # Optional, customize datasets to plot
+datasets = ["mnist", "fmnist", "medmnistA", "medmnistC"]  # Optional, customize datasets to plot
 
 # # alpha=0.1
 # y_limits = {
@@ -190,7 +187,7 @@ y_limits = {
     "medmnistC": (0, 48)
 }
 
-# 自定义图例名称
+# Custom legend names
 legend_names = {
     "local": "Local-Only",
     "fedavg": "FedAvg",
