@@ -3,6 +3,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
+import matplotlib.ticker as ticker  # Import the ticker module
 
 # Set dpi and font style
 dpi = 300
@@ -38,8 +39,9 @@ plt_dict = {
 }
 
 # Set method folder path
-base_folder = "./scores/"  # Change to the actual folder path
-dataset_names = ["cifar10", "cifar100"]  # Add multiple dataset names
+base_folder = "./results/scores/"  # Change to the actual folder path
+# dataset_names = ["cifar10", "cifar100"]  # Add multiple dataset names
+dataset_names = ["mnist", "fmnist"]  # Add multiple dataset names
 
 # Custom method names (LaTeX format)
 custom_method_names = [
@@ -123,8 +125,12 @@ for dataset_idx, dataset_name in enumerate(dataset_names):
     ax1.set_xticks(x_ticks)
     ax1.set_xticklabels([f'{tick:.1f}' for tick in x_ticks], fontsize=plt_dict['xtick.size'])
 
+    # Set y-axis tick label font size and format
+    ax1.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.2f'))  # Format y-axis to 2 decimal places
+    ax1.set_yticklabels([f'{tick:.2f}' for tick in ax1.get_yticks()], fontsize=plt_dict['ytick.size'])
+
     # Set y-axis tick label font size
-    ax1.set_yticklabels([f'{tick}' for tick in ax1.get_yticks()], fontsize=plt_dict['ytick.size'])
+    # ax1.set_yticklabels([f'{tick}' for tick in ax1.get_yticks()], fontsize=plt_dict['ytick.size'])
 
     # Set title and labels
     ax1.set_title(f'{dataset_name.upper()} (0.0 to 1.0)', fontsize=plt_dict['title.size'], fontweight='bold')
@@ -152,12 +158,17 @@ for dataset_idx, dataset_name in enumerate(dataset_names):
             ax2.plot(max_x, max_y, 'o', markersize=15, color=color, alpha=0.5)  # Highlight the highest point with larger size
 
     # Set x-axis to have denser ticks
+    # x_ticks = np.linspace(0.99, 1.0, 11)  # Create x ticks from 0.99 to 1.0
     x_ticks = np.linspace(0.99, 1.0, 11)  # Create x ticks from 0.99 to 1.0
     ax2.set_xticks(x_ticks)
     ax2.set_xticklabels([f'{tick:.3f}' for tick in x_ticks], fontsize=plt_dict['xtick.size'])
 
+    # For the second subplot (0.9 to 1.0)
+    ax2.yaxis.set_major_formatter(ticker.FormatStrFormatter('%.2f'))  # Format y-axis to 2 decimal places
+    ax2.set_yticklabels([f'{tick:.2f}' for tick in ax2.get_yticks()], fontsize=plt_dict['ytick.size'])
+
     # Set y-axis tick label font size
-    ax2.set_yticklabels([f'{tick}' for tick in ax2.get_yticks()], fontsize=plt_dict['ytick.size'])
+    # ax2.set_yticklabels([f'{tick}' for tick in ax2.get_yticks()], fontsize=plt_dict['ytick.size'])
 
     # Set title and labels
     ax2.set_title(f'{dataset_name.upper()} (0.99 to 1.0)', fontsize=plt_dict['title.size'], fontweight='bold')
@@ -172,7 +183,7 @@ for dataset_idx, dataset_name in enumerate(dataset_names):
 plt.tight_layout()
 
 # Save the image
-output_path = f'./figures/score_comparison.pdf'  # Set output path as a PDF file
+output_path = f'./figures/score_comparison_mnist_1.pdf'  # Set output path as a PDF file
 plt.savefig(output_path, dpi=dpi, format='pdf')
 
 # Show the image
