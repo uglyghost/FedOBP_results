@@ -41,7 +41,7 @@ plt_dict = {
 # Set method folder path
 base_folder = "./results/scores/"  # Change to the actual folder path
 # dataset_names = ["cifar10", "cifar100"]  # Add multiple dataset names
-dataset_names = ["mnist", "fmnist"]  # Add multiple dataset names
+dataset_names = ["medmnistA", "medmnistC"]  # Add multiple dataset names
 
 # Custom method names (LaTeX format)
 custom_method_names = [
@@ -183,7 +183,7 @@ for dataset_idx, dataset_name in enumerate(dataset_names):
 plt.tight_layout()
 
 # Save the image
-output_path = f'./figures/score_comparison_mnist_1.pdf'  # Set output path as a PDF file
+output_path = f'./figures/score_comparison_mnist_2.pdf'  # Set output path as a PDF file
 plt.savefig(output_path, dpi=dpi, format='pdf')
 
 # Show the image

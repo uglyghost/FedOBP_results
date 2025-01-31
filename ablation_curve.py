@@ -36,10 +36,10 @@ def plot_ablation_experiment_results(root_folder, custom_legend_order=None):
 
     # Use regular expressions to process folder names and map labels
     label_mapping = [
-        (r"Ablation_GlobalNorm_EMAscore\(0.5\)_ALL_IG_.*", "GlobalNorm (EMA w/o CLS)"),
-        (r"Ablation_GlobalNorm_EMAscore\(0.5\)_CLS_IG_.*", "GlobalNorm (EMA & CLS)"),
-        (r"Ablation_GlobalNorm_NoEMAscore_ALL_IG_.*", "GlobalNorm (NA)"),
-        (r"Ablation_GlobalNorm_NoEMAscore_CLS_IG_.*", "GlobalNorm (CLS w/o EMA)"),
+        # (r"Ablation_GlobalNorm_EMAscore\(0.5\)_ALL_IG_.*", "GlobalNorm (EMA w/o CLS)"),
+        # (r"Ablation_GlobalNorm_EMAscore\(0.5\)_CLS_IG_.*", "GlobalNorm (EMA & CLS)"),
+        (r"Ablation_GlobalNorm_NoEMAscore_ALL_IG_.*", "GlobalNorm"),
+        (r"Ablation_GlobalNorm_NoEMAscore_CLS_IG_.*", "GlobalNorm (CLS)"),
         (r"Ablation_LayerNorm_NoEMAscore_ALL_IG_.*", "LayerNorm"),
         (r"Ablation_NoNorm_NoEMAscore_ALL_IG_.*", "NoNorm")
     ]
@@ -64,6 +64,7 @@ def plot_ablation_experiment_results(root_folder, custom_legend_order=None):
     dataset_folders = [f for f in os.listdir(root_folder) if os.path.isdir(os.path.join(root_folder, f))]
 
     # Ensure the order of subplots matches the y-axis limits
+    # dataset_order = ["cifar10", "cifar100", "emnist", "svhn"]
     dataset_order = ["mnist", "fmnist", "medmnistA", "medmnistC"]
     dataset_folders = [folder for folder in dataset_order if folder in dataset_folders]
 
@@ -148,9 +149,10 @@ root_folder = "./results/ablation/mnist4datasets"
 # Custom legend order, for example:
 custom_legend_order = ["NoNorm",
                        "LayerNorm",
-                       "GlobalNorm (NA)",
-                       "GlobalNorm (EMA & CLS)",
-                       "GlobalNorm (CLS w/o EMA)",
-                       "GlobalNorm (EMA w/o CLS)"]
+                       "GlobalNorm",
+                       # "GlobalNorm (EMA & CLS)",
+                       # "GlobalNorm (CLS w/o EMA)",
+                       "GlobalNorm (CLS)"
+                       ]
 
 plot_ablation_experiment_results(root_folder, custom_legend_order)
